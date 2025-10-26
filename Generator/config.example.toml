@@ -1,0 +1,51 @@
+# Omarchy Theme Generator Configuration
+# Copy this file to ~/.config/omarchy-theme-watcher/config.toml and customize
+
+# Path to watch for theme changes
+# This should be the symlink that points to your current theme
+watch_path = "/home/user/.config/omarchy/current/theme"
+
+# Priority order for color extraction
+# The generator will try these files in order until it finds one
+color_priority = [
+    "alacritty.toml",      # Try alacritty first (most complete color definitions)
+    "custom_theme.json",   # Then custom JSON
+    "btop.theme",          # Finally btop theme
+]
+
+# Spicetify configuration
+[[programs]]
+name = "spicetify"
+enabled = true
+output_file = "spicetify.ini"
+template = "spicetify"
+# Optional: Add custom variables for the template
+# [programs.variables]
+# custom_var = "value"
+
+# Vencord (Discord) configuration
+[[programs]]
+name = "vencord"
+enabled = true
+output_file = "vencord.theme.css"
+template = "vencord"
+[programs.variables]
+theme_name = "Omarchy Theme"  # This appears in the theme metadata
+
+# Omarcord/system24 (Discord) configuration
+# Uses system24-compatible color variables for the Omarcord theme
+[[programs]]
+name = "omarcord"
+enabled = true
+output_file = "omarcord-colors.css"
+template = "omarcord"
+
+# Example: Add your own program
+# [[programs]]
+# name = "my-program"
+# enabled = true
+# output_file = "my-program.conf"
+# template = "my-program"
+# [programs.variables]
+# author = "Your Name"
+# version = "1.0.0"

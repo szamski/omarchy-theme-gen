@@ -1,0 +1,40 @@
+# Rust build artifacts
+Generator/target/
+Generator/Cargo.lock
+
+# Generated theme files
+*.theme.css.backup
+*.theme.css.*.backup
+**/generated/
+
+# Configuration files (users will have their own)
+Generator/config.toml
+.config/
+
+# Editor and IDE
+.claude/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+
+# Node modules (for Omarcord development)
+Omarcord/node_modules/
+Omarcord/build/
+
+# Backup files
+*.bak
+*.backup
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Local test files
+test_output/
+temp/
