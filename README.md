@@ -414,7 +414,7 @@ See respective LICENSE files in subdirectories for details.
 
 ## Links
 
-- **Omarchy**: [github.com/szamski/omarchy](https://github.com/szamski/omarchy)
+- **Omarchy**: [github.com/basecamp/omarchy](https://github.com/basecamp/omarchy)
 - **System24**: [github.com/refact0r/system24](https://github.com/refact0r/system24)
 - **Vencord**: [vencord.dev](https://vencord.dev/)
 - **Spicetify**: [spicetify.app](https://spicetify.app/)
