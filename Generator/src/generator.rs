@@ -3,7 +3,6 @@ use crate::color::ColorPalette;
 use crate::config::{Config, ProgramConfig};
 use crate::detector::ProgramDetector;
 use crate::extractor::{self, ColorSource};
-use crate::linker::SymlinkManager;
 use crate::templates::TemplateRenderer;
 use anyhow::{Context, Result};
 use std::fs;
@@ -82,6 +81,9 @@ impl Generator {
             match program_config.name.as_str() {
                 "omarcord" => self.deploy_omarcord(theme_dir, &palette, program_config, &installed)?,
                 "omarchify" => self.deploy_omarchify(theme_dir, &palette, program_config, &installed)?,
+                "omarcava" => self.deploy_omarcava(theme_dir, &palette, program_config, &installed)?,
+                "omarclock" => self.deploy_omarclock(theme_dir, &palette, program_config, &installed)?,
+                "omarvscode" => self.deploy_omarvscode(theme_dir, &palette, program_config, &installed)?,
                 _ => warn!("Unknown program type: {}", program_config.name),
             }
         }
@@ -137,6 +139,172 @@ impl Generator {
                 warn!("✗ Activation failed: {}", result.message);
             }
         }
+
+        Ok(())
+    }
+
+    /// Deploy Omarclock (tclock futuristic wrapper)
+    fn deploy_omarclock(
+        &self,
+        _theme_dir: &Path,
+        palette: &ColorPalette,
+        program_config: &ProgramConfig,
+        installed: &crate::detector::InstalledProgram,
+    ) -> Result<()> {
+        // 1. Render the omarclock.sh wrapper template
+        let content = self.renderer.render(&program_config.template, palette, &program_config.variables)
+            .context("Failed to render Omarclock template")?;
+
+        // 2. Save to centralized location (for backup/reference)
+        let output_dir = &self.config.generated_themes_dir;
+        fs::create_dir_all(output_dir)?;
+        let generated_file = output_dir.join(&program_config.output_file);
+        fs::write(&generated_file, &content)?;
+        info!("✓ Generated Omarclock wrapper: {:?}", generated_file);
+
+        // 3. Get the target wrapper script path (~/.local/bin/omarclock)
+        let wrapper_file = installed.config_file.as_ref()
+            .context("Omarclock wrapper path not set")?;
+
+        // 4. Backup existing wrapper if it exists and backups are enabled
+        if wrapper_file.exists() && self.config.create_backups {
+            let backup_dir = dirs::home_dir()
+                .unwrap_or_else(|| PathBuf::from("."))
+                .join(".config/omarchy-themes/backups");
+            fs::create_dir_all(&backup_dir)?;
+
+            let timestamp = chrono::Local::now().format("%Y%m%d_%H%M%S");
+            let backup_file = backup_dir.join(format!("omarclock.{}", timestamp));
+            fs::copy(wrapper_file, &backup_file).ok();
+            info!("✓ Backed up existing Omarclock wrapper: {:?}", backup_file);
+        }
+
+        // 5. Write the wrapper script
+        fs::write(wrapper_file, content)?;
+        info!("✓ Wrote Omarclock wrapper to: {:?}", wrapper_file);
+
+        // 6. Make it executable
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = fs::metadata(wrapper_file)?.permissions();
+            perms.set_mode(0o755); // rwxr-xr-x
+            fs::set_permissions(wrapper_file, perms)?;
+            info!("✓ Made Omarclock wrapper executable");
+        }
+
+        info!("✓ Omarclock ready! Run 'omarclock' to launch futuristic clock");
+
+        Ok(())
+    }
+
+    /// Deploy Omarcava (Cava audio visualizer)
+    fn deploy_omarcava(
+        &self,
+        _theme_dir: &Path,
+        palette: &ColorPalette,
+        program_config: &ProgramConfig,
+        installed: &crate::detector::InstalledProgram,
+    ) -> Result<()> {
+        // 1. Render the omarcava.config template
+        let content = self.renderer.render(&program_config.template, palette, &program_config.variables)
+            .context("Failed to render Omarcava template")?;
+
+        // 2. Save to centralized location (for backup/reference)
+        let output_dir = &self.config.generated_themes_dir;
+        fs::create_dir_all(output_dir)?;
+        let generated_file = output_dir.join(&program_config.output_file);
+        fs::write(&generated_file, &content)?;
+        info!("✓ Generated Omarcava config: {:?}", generated_file);
+
+        // 3. Ensure Cava config directory exists
+        let cava_config_dir = &installed.theme_dir;
+        fs::create_dir_all(cava_config_dir)?;
+
+        // 4. Get the target config file path
+        let cava_config_file = installed.config_file.as_ref()
+            .context("Cava config file path not set")?;
+
+        // 5. Backup existing config if it exists and backups are enabled
+        if cava_config_file.exists() && self.config.create_backups {
+            let backup_dir = dirs::home_dir()
+                .unwrap_or_else(|| PathBuf::from("."))
+                .join(".config/omarchy-themes/backups");
+            fs::create_dir_all(&backup_dir)?;
+
+            let timestamp = chrono::Local::now().format("%Y%m%d_%H%M%S");
+            let backup_file = backup_dir.join(format!("cava_config.{}", timestamp));
+            fs::copy(cava_config_file, &backup_file).ok();
+            info!("✓ Backed up existing Cava config: {:?}", backup_file);
+        }
+
+        // 6. Write the config file directly
+        fs::write(cava_config_file, content)?;
+        info!("✓ Wrote Omarcava config to: {:?}", cava_config_file);
+
+        // 7. Activate if enabled (send reload signal to running instances)
+        if self.config.auto_activate {
+            let result = ThemeActivator::activate_omarcava(installed)?;
+            if result.success {
+                info!("✓ {}", result.message);
+            } else {
+                info!("→ {}", result.message);
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Deploy Omarvscode (VS Code theme)
+    fn deploy_omarvscode(
+        &self,
+        _theme_dir: &Path,
+        palette: &ColorPalette,
+        program_config: &ProgramConfig,
+        installed: &crate::detector::InstalledProgram,
+    ) -> Result<()> {
+        // 1. Create extension directory structure
+        let ext_dir = &installed.theme_dir;
+        let themes_dir = ext_dir.join("themes");
+        fs::create_dir_all(&themes_dir)?;
+
+        // 2. Render the VS Code theme JSON template
+        let theme_content = self.renderer.render("omarvscode", palette, &program_config.variables)
+            .context("Failed to render VS Code theme template")?;
+
+        // 3. Save to centralized location (for backup/reference)
+        let output_dir = &self.config.generated_themes_dir;
+        fs::create_dir_all(output_dir)?;
+        let generated_file = output_dir.join("omarvscode-color-theme.json");
+        fs::write(&generated_file, &theme_content)?;
+        info!("✓ Generated VS Code theme: {:?}", generated_file);
+
+        // 4. Write theme JSON to extension themes directory
+        let theme_file = themes_dir.join("omarvscode-color-theme.json");
+        if theme_file.exists() && self.config.create_backups {
+            let backup_dir = dirs::home_dir()
+                .unwrap_or_else(|| PathBuf::from("."))
+                .join(".config/omarchy-themes/backups");
+            fs::create_dir_all(&backup_dir)?;
+
+            let timestamp = chrono::Local::now().format("%Y%m%d_%H%M%S");
+            let backup_file = backup_dir.join(format!("omarvscode-color-theme.json.{}", timestamp));
+            fs::copy(&theme_file, &backup_file).ok();
+        }
+
+        fs::write(&theme_file, theme_content)?;
+        info!("✓ Wrote VS Code theme to: {:?}", theme_file);
+
+        // 5. Render and write package.json
+        let package_content = self.renderer.render("omarvscode-package", palette, &program_config.variables)
+            .context("Failed to render VS Code package.json template")?;
+
+        let package_file = ext_dir.join("package.json");
+        fs::write(&package_file, package_content)?;
+        info!("✓ Wrote VS Code package.json to: {:?}", package_file);
+
+        info!("✓ VS Code theme ready! Reload VS Code window to see changes (Ctrl+Shift+P > Reload Window)");
+        info!("   Then select theme: Ctrl+Shift+P > Preferences: Color Theme > Omarvscode");
 
         Ok(())
     }

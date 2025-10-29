@@ -40,7 +40,7 @@ echo "  1. Uninstall the current installation"
 echo "  2. Rebuild from source"
 echo "  3. Install fresh version"
 echo ""
-echo "Your Spicetify and Vencord installations will remain intact."
+echo "Your Spicetify, Vencord, and Cava installations will remain intact."
 echo ""
 
 read -p "Continue with reinstall? [Y/n]: " confirm
@@ -61,7 +61,8 @@ section "Part 1: Uninstalling Current Version"
 # y = remove backups
 # n = don't remove Vencord theme
 # n = don't remove Spicetify theme
-echo -e "y\ny\ny\nn\nn" | bash "$SCRIPT_DIR/uninstall.sh"
+# n = don't remove Cava config
+echo -e "y\ny\ny\nn\nn\nn" | bash "$SCRIPT_DIR/uninstall.sh"
 
 if [ $? -ne 0 ]; then
     error "Uninstall failed!"
@@ -79,8 +80,35 @@ section "Part 2: Cleaning Build Artifacts"
 if [ -d "$SCRIPT_DIR/Generator/target" ]; then
     info "Cleaning previous build..."
     cd "$SCRIPT_DIR/Generator"
-    cargo clean
-    success "Build artifacts cleaned"
+
+    # Try cargo clean first
+    if cargo clean 2>/dev/null; then
+        success "Build artifacts cleaned"
+    else
+        warning "Cargo clean failed (permission issue), trying alternative method..."
+
+        # Try with sudo if not root
+        if [ "$EUID" -ne 0 ]; then
+            info "Attempting to fix permissions and clean..."
+            if sudo chmod -R u+w target 2>/dev/null && cargo clean 2>/dev/null; then
+                success "Build artifacts cleaned with fixed permissions"
+            else
+                warning "Could not clean build artifacts, removing target directory..."
+                # Last resort: remove the entire target directory
+                if sudo rm -rf target 2>/dev/null; then
+                    success "Target directory removed"
+                else
+                    warning "Could not remove target directory, continuing anyway..."
+                fi
+            fi
+        else
+            # If running as root, just remove it
+            rm -rf target 2>/dev/null || true
+            success "Build artifacts removed"
+        fi
+    fi
+else
+    info "No build artifacts to clean"
 fi
 
 #############################################

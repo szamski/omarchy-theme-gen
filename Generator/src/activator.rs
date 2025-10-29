@@ -26,6 +26,7 @@ impl ThemeActivator {
             let result = match program.name.as_str() {
                 "vencord" => Self::activate_vencord(program),
                 "spicetify" => Self::activate_spicetify(program),
+                "cava" => Self::activate_omarcava(program),
                 _ => Ok(ActivationResult {
                     program: program.name.clone(),
                     success: false,
@@ -54,6 +55,54 @@ impl ThemeActivator {
     /// Activate Omarchify theme (wrapper for Spicetify with correct scheme name)
     pub fn activate_omarchify(program: &InstalledProgram) -> Result<ActivationResult> {
         Self::activate_spicetify_with_scheme(program, "text", "Omarchify")
+    }
+
+    /// Activate Omarcava theme (reload running Cava instances)
+    pub fn activate_omarcava(program: &InstalledProgram) -> Result<ActivationResult> {
+        debug!("Activating Omarcava theme...");
+
+        // Check if Cava is running
+        let cava_running = Command::new("pgrep")
+            .arg("cava")
+            .output()
+            .map(|o| o.status.success())
+            .unwrap_or(false);
+
+        if cava_running {
+            // Cava requires manual reload (press 'r' key)
+            // Send notification if notify-send is available
+            let notification_sent = Command::new("notify-send")
+                .args(&[
+                    "-u", "normal",
+                    "-t", "3000",
+                    "-a", "Omarchy Theme Generator",
+                    "Cava Theme Updated",
+                    "Press 'r' in Cava to reload, or restart Cava to see new theme"
+                ])
+                .output()
+                .map(|o| o.status.success())
+                .unwrap_or(false);
+
+            if notification_sent {
+                info!("→ Cava is running - notification sent to reload");
+            } else {
+                info!("→ Cava is running - press 'r' to reload or restart Cava");
+            }
+
+            Ok(ActivationResult {
+                program: program.name.clone(),
+                success: true,
+                message: "Config updated (press 'r' in Cava to reload)".to_string(),
+            })
+        } else {
+            // No running instance - config will load on next launch
+            debug!("No running Cava instances found");
+            Ok(ActivationResult {
+                program: program.name.clone(),
+                success: true,
+                message: "Config ready (will load on next Cava launch)".to_string(),
+            })
+        }
     }
 
     /// Activate Vencord theme by updating settings.json
@@ -237,6 +286,7 @@ impl ThemeActivator {
     }
 
     /// Deactivate theme for a program
+    #[allow(dead_code)]
     pub fn deactivate(program: &InstalledProgram) -> Result<ActivationResult> {
         match program.name.as_str() {
             "vencord" => Self::deactivate_vencord(program),
@@ -250,6 +300,7 @@ impl ThemeActivator {
     }
 
     /// Deactivate Vencord theme
+    #[allow(dead_code)]
     fn deactivate_vencord(program: &InstalledProgram) -> Result<ActivationResult> {
         let settings_file = program
             .config_file
@@ -291,6 +342,7 @@ impl ThemeActivator {
     }
 
     /// Deactivate Spicetify theme
+    #[allow(dead_code)]
     fn deactivate_spicetify(program: &InstalledProgram) -> Result<ActivationResult> {
         if !program.cli_available {
             return Ok(ActivationResult {

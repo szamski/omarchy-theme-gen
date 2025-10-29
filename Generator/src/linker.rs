@@ -22,6 +22,7 @@ pub struct SymlinkManager {
 #[derive(Debug)]
 pub struct LinkResult {
     pub program: String,
+    #[allow(dead_code)]
     pub target_path: PathBuf,
     pub success: bool,
     pub message: String,
@@ -55,6 +56,7 @@ impl SymlinkManager {
     }
 
     /// Get the source directory for generated themes
+    #[allow(dead_code)]
     pub fn get_source_dir() -> PathBuf {
         dirs::home_dir()
             .unwrap_or_else(|| PathBuf::from("."))
@@ -203,6 +205,7 @@ impl SymlinkManager {
     }
 
     /// Clean up broken symlinks in a directory
+    #[allow(dead_code)]
     pub fn cleanup_broken_links(&self, dir: &Path) -> Result<Vec<PathBuf>> {
         let mut cleaned = Vec::new();
 
@@ -232,6 +235,7 @@ impl SymlinkManager {
     }
 
     /// Verify that a symlink points to the expected location
+    #[allow(dead_code)]
     pub fn verify_link(&self, path: &Path, expected_target: &Path) -> bool {
         if !path.is_symlink() {
             return false;

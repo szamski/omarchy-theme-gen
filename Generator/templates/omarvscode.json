@@ -1,0 +1,149 @@
+{
+    "name": "Omarvscode",
+    "extension": null,
+    "$schema": "vscode://schemas/color-theme",
+    "type": "dark",
+    "colors": {
+        "foreground": "{{ foreground | default(value="#ffffff") }}",
+        "disabledForeground": "{{ white | default(value="#e6e6e6") }}",
+        "widget.shadow": "{{ background | default(value="#0e0e12") }}",
+        "selection.background": "{{ bright_magenta | default(value="#ff58aa") }}",
+        "descriptionForeground": "{{ bright_black | default(value="#5a5a6e") }}",
+        "errorForeground": "{{ red | default(value="#ff003c") }}",
+        "icon.foreground": "{{ white | default(value="#e6e6e6") }}",
+
+        "button.background": "{{ bright_yellow | default(value="#ffe64d") }}",
+        "button.foreground": "{{ background | default(value="#0e0e12") }}",
+        "button.hoverBackground": "{{ yellow | default(value="#fcee0a") }}",
+        "button.secondaryForeground": "{{ foreground | default(value="#ffffff") }}",
+        "button.secondaryBackground": "{{ bright_red | default(value="#ff2d6f") }}",
+        "button.secondaryHoverBackground": "{{ red | default(value="#ff003c") }}",
+
+        "input.background": "{{ background | default(value="#0e0e12") }}",
+        "input.foreground": "{{ foreground | default(value="#ffffff") }}",
+        "input.placeholderForeground": "{{ bright_black | default(value="#5a5a6e") }}",
+
+        "activityBar.background": "{{ background | default(value="#0e0e12") }}",
+        "activityBar.foreground": "{{ foreground | default(value="#ffffff") }}",
+        "activityBar.inactiveForeground": "{{ bright_black | default(value="#5a5a6e") }}",
+        "activityBarBadge.background": "{{ bright_yellow | default(value="#ffe64d") }}",
+        "activityBarBadge.foreground": "{{ background | default(value="#0e0e12") }}",
+        "activityBar.activeBackground": "{{ bright_black | default(value="#5a5a6e") }}",
+
+        "sideBar.background": "{{ background | default(value="#0e0e12") }}",
+        "sideBar.foreground": "{{ foreground | default(value="#ffffff") }}",
+        "sideBarTitle.foreground": "{{ foreground | default(value="#ffffff") }}",
+        "sideBarSectionHeader.background": "{{ bright_black | default(value="#5a5a6e") }}",
+        "sideBarSectionHeader.foreground": "{{ foreground | default(value="#ffffff") }}",
+
+        "tab.activeBackground": "{{ background | default(value="#0e0e12") }}",
+        "tab.activeForeground": "{{ foreground | default(value="#ffffff") }}",
+        "tab.inactiveBackground": "{{ background | default(value="#0e0e12") }}",
+        "tab.inactiveForeground": "{{ bright_black | default(value="#5a5a6e") }}",
+        "tab.hoverBackground": "{{ bright_black | default(value="#5a5a6e") }}",
+        "tab.activeModifiedBorder": "{{ bright_yellow | default(value="#ffe64d") }}",
+
+        "editor.background": "{{ background | default(value="#0e0e12") }}",
+        "editor.foreground": "{{ foreground | default(value="#ffffff") }}",
+        "editorLineNumber.foreground": "{{ bright_black | default(value="#5a5a6e") }}",
+        "editorLineNumber.activeForeground": "{{ white | default(value="#e6e6e6") }}",
+        "editorCursor.foreground": "{{ foreground | default(value="#ffffff") }}",
+        "editor.selectionBackground": "{{ bright_black | default(value="#5a5a6e") }}",
+        "editor.findMatchBackground": "{{ yellow | default(value="#fcee0a66") }}",
+        "editor.findMatchHighlightBackground": "{{ bright_red | default(value="#ff2d6f66") }}",
+
+        "panel.background": "{{ background | default(value="#0e0e12") }}",
+        "panelTitle.activeForeground": "{{ foreground | default(value="#ffffff") }}",
+        "panelTitle.inactiveForeground": "{{ bright_black | default(value="#5a5a6e") }}",
+
+        "statusBar.background": "{{ bright_yellow | default(value="#ffe64d") }}",
+        "statusBar.foreground": "{{ background | default(value="#0e0e12") }}",
+        "statusBar.debuggingBackground": "{{ bright_red | default(value="#ff2d6f") }}",
+        "statusBar.debuggingForeground": "{{ background | default(value="#0e0e12") }}",
+        "statusBar.noFolderBackground": "{{ yellow | default(value="#fcee0a") }}",
+        "statusBar.noFolderForeground": "{{ background | default(value="#0e0e12") }}",
+        "statusBarItem.hoverBackground": "{{ yellow | default(value="#fcee0a") }}",
+        "statusBarItem.remoteBackground": "{{ bright_cyan | default(value="#5cffea") }}",
+        "statusBarItem.remoteForeground": "{{ background | default(value="#0e0e12") }}",
+        "statusBarItem.errorBackground": "{{ red | default(value="#ff003c") }}",
+        "statusBarItem.errorForeground": "{{ foreground | default(value="#ffffff") }}",
+        "statusBarItem.warningBackground": "{{ yellow | default(value="#fcee0a") }}",
+        "statusBarItem.warningForeground": "{{ background | default(value="#0e0e12") }}",
+
+        "titleBar.activeBackground": "{{ background | default(value="#0e0e12") }}",
+        "titleBar.activeForeground": "{{ foreground | default(value="#ffffff") }}",
+        "titleBar.inactiveBackground": "{{ background | default(value="#0e0e12") }}",
+        "titleBar.inactiveForeground": "{{ bright_black | default(value="#5a5a6e") }}",
+
+        "terminal.background": "{{ background | default(value="#0e0e12") }}",
+        "terminal.foreground": "{{ foreground | default(value="#ffffff") }}",
+        "terminal.ansiBlack": "{{ black | default(value="#0e0e12") }}",
+        "terminal.ansiRed": "{{ red | default(value="#ff003c") }}",
+        "terminal.ansiGreen": "{{ green | default(value="#00f9ff") }}",
+        "terminal.ansiYellow": "{{ yellow | default(value="#fcee0a") }}",
+        "terminal.ansiBlue": "{{ blue | default(value="#bd00ff") }}",
+        "terminal.ansiMagenta": "{{ magenta | default(value="#ff007c") }}",
+        "terminal.ansiCyan": "{{ cyan | default(value="#00e8fc") }}",
+        "terminal.ansiWhite": "{{ white | default(value="#e6e6e6") }}",
+        "terminal.ansiBrightBlack": "{{ bright_black | default(value="#5a5a6e") }}",
+        "terminal.ansiBrightRed": "{{ bright_red | default(value="#ff2d6f") }}",
+        "terminal.ansiBrightGreen": "{{ bright_green | default(value="#39ffd1") }}",
+        "terminal.ansiBrightYellow": "{{ bright_yellow | default(value="#ffe64d") }}",
+        "terminal.ansiBrightBlue": "{{ bright_blue | default(value="#bd7cff") }}",
+        "terminal.ansiBrightMagenta": "{{ bright_magenta | default(value="#ff58aa") }}",
+        "terminal.ansiBrightCyan": "{{ bright_cyan | default(value="#5cffea") }}",
+        "terminal.ansiBrightWhite": "{{ bright_white | default(value="#ffffff") }}"
+    },
+    "tokenColors": [
+        {
+            "name": "Comment",
+            "scope": ["comment"],
+            "settings": {
+                "fontStyle": "italic",
+                "foreground": "{{ bright_black | default(value="#5a5a6e") }}"
+            }
+        },
+        {
+            "name": "Variables",
+            "scope": ["variable"],
+            "settings": {
+                "foreground": "{{ red | default(value="#ff003c") }}"
+            }
+        },
+        {
+            "name": "Keywords",
+            "scope": ["keyword"],
+            "settings": {
+                "foreground": "{{ magenta | default(value="#ff007c") }}"
+            }
+        },
+        {
+            "name": "Functions",
+            "scope": ["entity.name.function", "support.function"],
+            "settings": {
+                "foreground": "{{ blue | default(value="#bd00ff") }}"
+            }
+        },
+        {
+            "name": "Strings",
+            "scope": ["string"],
+            "settings": {
+                "foreground": "{{ green | default(value="#00f9ff") }}"
+            }
+        },
+        {
+            "name": "Numbers",
+            "scope": ["constant.numeric"],
+            "settings": {
+                "foreground": "{{ bright_red | default(value="#ff2d6f") }}"
+            }
+        },
+        {
+            "name": "Classes",
+            "scope": ["entity.name.type", "entity.name.class", "support.class"],
+            "settings": {
+                "foreground": "{{ yellow | default(value="#fcee0a") }}"
+            }
+        }
+    ]
+}

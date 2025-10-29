@@ -1,6 +1,6 @@
 #!/bin/bash
 # Omarchy Theme Generator - Comprehensive Installation Script
-# Installs: Generator + Spicetify + Vencord + Themes
+# Installs: Generator + Spicetify + Vencord + Cava + Themes
 
 set -e
 
@@ -36,6 +36,7 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALLED_GENERATOR=false
 INSTALLED_SPICETIFY=false
 INSTALLED_VENCORD=false
+INSTALLED_CAVA=false
 
 # Function to print status messages
 info() { echo -e "${BLUE}[INFO]${NC} $1"; }
@@ -211,6 +212,102 @@ else
 fi
 
 #############################################
+# PART 3.5: Install Cava (if needed)
+#############################################
+
+section "Part 3.5: Cava Setup"
+
+if command_exists cava; then
+    success "Cava is already installed"
+    cava --version 2>/dev/null || echo "  (version detection not supported)"
+    INSTALLED_CAVA=true
+else
+    echo "Cava (audio visualizer) is not installed."
+    echo "Omarcava provides a Cyberpunk 2077-inspired theme for Cava."
+
+    read -p "Do you want to install Cava? [Y/n]: " install_cava
+
+    if [[ ! "$install_cava" =~ ^[Nn]$ ]]; then
+        info "Installing Cava..."
+        echo ""
+        echo "Cava installation options:"
+        echo "  1) Install via package manager (recommended)"
+        echo "  2) Manual installation instructions"
+        read -p "Choose option [1-2]: " cava_choice
+
+        case $cava_choice in
+            1)
+                # Detect package manager and install
+                if command_exists pacman; then
+                    info "Installing via pacman..."
+                    if [ "$IS_ROOT" = true ]; then
+                        pacman -S --noconfirm cava
+                    else
+                        sudo pacman -S cava
+                    fi
+                elif command_exists apt-get; then
+                    info "Installing via apt..."
+                    if [ "$IS_ROOT" = true ]; then
+                        apt-get update && apt-get install -y cava
+                    else
+                        sudo apt-get update && sudo apt-get install -y cava
+                    fi
+                elif command_exists dnf; then
+                    info "Installing via dnf..."
+                    if [ "$IS_ROOT" = true ]; then
+                        dnf install -y cava
+                    else
+                        sudo dnf install -y cava
+                    fi
+                elif command_exists zypper; then
+                    info "Installing via zypper..."
+                    if [ "$IS_ROOT" = true ]; then
+                        zypper install -y cava
+                    else
+                        sudo zypper install -y cava
+                    fi
+                else
+                    warning "No supported package manager found"
+                    echo "Please install Cava manually:"
+                    echo "  https://github.com/karlstav/cava"
+                fi
+
+                if command_exists cava; then
+                    success "Cava installed successfully"
+                    INSTALLED_CAVA=true
+                else
+                    warning "Cava installation may have failed. You can install it manually later."
+                fi
+                ;;
+            2)
+                info "Manual Cava installation:"
+                echo ""
+                echo "  Option 1 - Package Manager:"
+                echo "    Arch:   sudo pacman -S cava"
+                echo "    Debian: sudo apt install cava"
+                echo "    Fedora: sudo dnf install cava"
+                echo ""
+                echo "  Option 2 - From Source:"
+                echo "    Visit: https://github.com/karlstav/cava"
+                echo "    Follow build instructions in README"
+                echo ""
+                ;;
+        esac
+    else
+        info "Skipping Cava installation"
+        echo "  Note: Omarcava theme will be available but disabled in config"
+    fi
+fi
+
+# Update config to enable/disable Cava based on installation
+if [ -f "$CONFIG_DIR/config.toml" ]; then
+    if command_exists cava; then
+        info "Cava detected - Omarcava theme is available"
+        echo "  Edit $CONFIG_DIR/config.toml to enable omarcava"
+    fi
+fi
+
+#############################################
 # PART 4: Systemd Service Setup
 #############################################
 
@@ -279,6 +376,7 @@ echo "Installed Components:"
 [ "$INSTALLED_GENERATOR" = true ] && echo "  ${GREEN}✓${NC} Theme Generator"
 [ "$INSTALLED_SPICETIFY" = true ] && echo "  ${GREEN}✓${NC} Spicetify"
 [ "$INSTALLED_VENCORD" = true ] && echo "  ${GREEN}✓${NC} Vencord"
+[ "$INSTALLED_CAVA" = true ] && echo "  ${GREEN}✓${NC} Cava (Audio Visualizer)"
 
 echo ""
 echo "File Locations:"
@@ -289,6 +387,9 @@ if command_exists spicetify; then
 fi
 if [ -d "$VENCORD_DIR" ]; then
     echo "  Vencord:    ${YELLOW}$VENCORD_DIR${NC}"
+fi
+if command_exists cava; then
+    echo "  Cava:       ${YELLOW}$ACTUAL_HOME/.config/cava/${NC}"
 fi
 
 echo ""

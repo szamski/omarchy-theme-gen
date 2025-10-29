@@ -40,6 +40,43 @@ enabled = true
 output_file = "omarcord-colors.css"
 template = "omarcord"
 
+# Omarcava (Cava Audio Visualizer) configuration
+# Generates a Cyberpunk 2077-inspired futuristic visualizer theme
+[[programs]]
+name = "omarcava"
+enabled = false  # Disabled by default - enable if you have Cava installed
+output_file = "config"
+template = "omarcava"
+# Optional: Customize visualizer settings
+# [programs.variables]
+# bars = 64              # Number of bars (32-64 recommended)
+# gravity = 100          # Bar drop speed (higher = faster drops)
+# sensitivity = 200      # Audio sensitivity (higher = more reactive)
+# framerate = 60         # Frame rate (30-60 recommended)
+
+# Omarclock (tclock) configuration
+# Generates a futuristic cyberpunk wrapper for the tclock terminal clock
+[[programs]]
+name = "omarclock"
+enabled = false  # Disabled by default - enable if you have tclock installed
+output_file = "omarclock"
+template = "omarclock"
+# Optional: Customize clock appearance
+# [programs.variables]
+# size = "1"             # Clock size (1-5, default: 1, increase if terminal is large)
+# mode = "clock"         # Mode: clock, timer, stopwatch, countdown
+# style = "minimal"      # Style: minimal (HH:MM), compact (HH:MM:SS), detailed (with ms), default (with date), time-only (HH:MM)
+
+# Omarvscode (VS Code) configuration
+# Generates a VS Code theme with yellow/red status bar and full color support
+[[programs]]
+name = "omarvscode"
+enabled = false  # Disabled by default - enable if you have VS Code installed
+output_file = "omarvscode-color-theme.json"
+template = "omarvscode"
+# After enabling, reload VS Code and select the theme:
+# Ctrl+Shift+P > Preferences: Color Theme > Omarvscode
+
 # Example: Add your own program
 # [[programs]]
 # name = "my-program"

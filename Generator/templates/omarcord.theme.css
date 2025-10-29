@@ -110,24 +110,24 @@ body {
     --active-2: oklch(54% 0 0 / 0.3); /* extra state for transparent buttons */
     --message-hover: var(--hover); /* messages when hovered */
 
-    /* accent colors */
-    --accent-1: var(--green-1); /* links and other accent text */
-    --accent-2: var(--green-2); /* small accent elements */
-    --accent-3: var(--green-3); /* accent buttons */
-    --accent-4: var(--green-4); /* accent buttons when hovered */
-    --accent-5: var(--green-5); /* accent buttons when clicked */
+    /* accent colors - varied for visual interest */
+    --accent-1: var(--cyan-1); /* links and other accent text (cyan/turquoise) */
+    --accent-2: var(--green-2); /* small accent elements (green/turquoise) */
+    --accent-3: var(--cyan-3); /* accent buttons (cyan) */
+    --accent-4: var(--green-4); /* accent buttons when hovered (green) */
+    --accent-5: var(--cyan-5); /* accent buttons when clicked (cyan) */
     --accent-new: var(--red-2); /* stuff that's normally red like mute/deafen buttons */
     --mention: linear-gradient(to right, color-mix(in hsl, var(--accent-2), transparent 90%) 40%, transparent); /* background of messages that mention you */
     --mention-hover: linear-gradient(to right, color-mix(in hsl, var(--accent-2), transparent 95%) 40%, transparent); /* background of messages that mention you when hovered */
     --reply: linear-gradient(to right, color-mix(in hsl, var(--text-3), transparent 90%) 40%, transparent); /* background of messages that reply to you */
     --reply-hover: linear-gradient(to right, color-mix(in hsl, var(--text-3), transparent 95%) 40%, transparent); /* background of messages that reply to you when hovered */
 
-    /* status indicator colors */
-    --online: var(--green-2); /* change to #40a258 for default */
-    --dnd: var(--red-2); /* change to #d83a41 for default */
-    --idle: var(--yellow-2); /* change to #cc954c for default */
-    --streaming: var(--purple-2); /* change to ##9147ff for default */
-    --offline: var(--text-4); /* change to #82838b for default offline color */
+    /* status indicator colors - using varied palette */
+    --online: var(--green-2); /* green for online */
+    --dnd: var(--red-2); /* red for do not disturb */
+    --idle: var(--yellow-2); /* yellow for idle */
+    --streaming: var(--purple-2); /* purple/magenta for streaming */
+    --offline: var(--text-4); /* muted for offline */
 
     /* border colors */
     --border-light: var(--hover); /* general light border color */

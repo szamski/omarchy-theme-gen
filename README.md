@@ -1,6 +1,6 @@
 # Omarchy Theme Generator
 
-Automatically synchronize your [Omarchy](https://github.com/szamski/omarchy) theme colors with Discord (Vencord) and Spotify (Spicetify).
+Automatically synchronize your [Omarchy](https://github.com/szamski/omarchy) theme colors with Discord (Vencord), Spotify (Spicetify), Cava (audio visualizer), and more.
 
 ## Overview
 
@@ -8,8 +8,11 @@ Omarchy Theme Generator is a Rust-based CLI tool that watches for changes in you
 
 - **Omarcord**: A System24-based theme for Discord (via Vencord)
 - **Omarchify**: A text-based theme for Spotify (via Spicetify)
+- **Omarcava**: A Cyberpunk 2077-inspired theme for Cava audio visualizer
+- **Omarclock**: A futuristic wrapper for tclock terminal clock
+- **Omarvscode**: A VS Code theme with vibrant yellow/red status bar
 
-When you change your Omarchy theme, your Discord and Spotify themes update automatically to match, including the signature turquoise accents.
+When you change your Omarchy theme, all enabled applications update automatically to match, including the signature turquoise accents.
 
 ## Features
 
@@ -31,6 +34,8 @@ When you change your Omarchy theme, your Discord and Spotify themes update autom
 - **Vencord** (optional): Discord client mod - installed via install.sh
 - **Spotify** (optional): For Spotify theming
 - **Spicetify** (optional): Spotify theming CLI - installed via install.sh
+- **Cava** (optional): Audio visualizer - `sudo pacman -S cava` (Arch) or `sudo apt install cava` (Debian/Ubuntu)
+- **tclock** (optional): Terminal clock - install from [tclock](https://github.com/nwrenger/tclock)
 
 ## Installation
 
@@ -158,6 +163,24 @@ enabled = true
 output_file = "color.ini"
 template = "omarchify"
 
+[[programs]]
+name = "omarcava"
+enabled = false  # Enable if you have Cava installed
+output_file = "config"
+template = "omarcava"
+
+[[programs]]
+name = "omarclock"
+enabled = false  # Enable if you have tclock installed
+output_file = "omarclock"
+template = "omarclock"
+
+[[programs]]
+name = "omarvscode"
+enabled = false  # Enable if you use VS Code
+output_file = "omarvscode-color-theme.json"
+template = "omarvscode"
+
 # Options
 auto_symlink = true       # Create symlinks to theme directories
 auto_activate = true      # Automatically activate themes
@@ -179,7 +202,9 @@ omarchy-theme-gen/
 │   │   └── ...
 │   └── templates/
 │       ├── omarcord.theme.css      # Full Discord theme template
-│       └── omarchify-colors.ini    # Spotify color section
+│       ├── omarchify-colors.ini    # Spotify color section
+│       ├── omarcava.config         # Cava audio visualizer config
+│       └── omarclock.sh            # tclock wrapper script
 │
 ├── Omarcord/              # System24 fork for Discord
 │   ├── assets/            # Theme assets (fonts, images)
@@ -217,6 +242,66 @@ omarchy-theme-gen/
 5. **Activation**: Runs `spicetify config color_scheme Omarchify && spicetify apply`
 6. **Updates**: Requires Spotify restart
 
+### Omarcava (Cava Audio Visualizer)
+
+**Cyberpunk 2077-Inspired Aesthetic**
+
+1. **Template**: Full Cava config with 8-color vertical gradient
+2. **Color Mapping**:
+   - Gradient: purple → magenta → pink → cyan → turquoise → green → white
+   - Maps to theme colors: `bright_magenta`, `magenta`, `bright_red`, `bright_cyan`, `cyan`, `bright_green`, `green`, `foreground`
+3. **Deployment**: Writes directly to `~/.config/cava/config`
+4. **Backup**: Creates timestamped backup if config exists
+5. **Activation**: Sends notification to reload (Cava requires pressing 'r' or restart)
+6. **Updates**: Next launch or manual reload
+
+**Features**:
+- 8-color neon gradient (bottom to top)
+- High-energy animations (fast drops, smooth transitions)
+- Optimized for EDM/electronic music
+- Customizable bars, gravity, sensitivity, framerate
+
+**Customization** (in config.toml):
+```toml
+[[programs]]
+name = "omarcava"
+enabled = true
+[programs.variables]
+bars = 64              # More bars = denser visualization
+gravity = 100          # Higher = faster drops (neon flicker)
+integral = 55          # Higher = smoother transitions
+monstercat = 35        # Bass emphasis (club feel)
+framerate = 60         # 30-60 FPS
+```
+
+### Omarclock (tclock Wrapper)
+
+**Futuristic Terminal Clock**
+
+1. **Template**: Shell script wrapper for tclock with theme colors
+2. **Color Injection**: Injects RGB values from Omarchy theme
+3. **Deployment**: Creates executable script at `~/.local/bin/omarclock`
+4. **Usage**: Run `omarclock` to launch themed clock
+5. **Updates**: Instant on next launch
+
+**Features**:
+- Dynamic color injection from current theme
+- Supports all tclock modes (clock, timer, stopwatch, countdown)
+- Turquoise accents matching Omarchy theme
+- Customizable size and appearance
+
+**Usage**:
+```bash
+# Launch futuristic clock
+omarclock
+
+# With custom size
+omarclock --size 5
+
+# Timer mode
+omarclock --mode timer
+```
+
 ### Color Extraction
 
 The generator extracts colors from your Omarchy theme files in priority order:
@@ -246,6 +331,49 @@ Based on [text theme](https://github.com/spicetify/spicetify-themes/tree/master/
 - Synchronized with Discord theme
 - ASCII banner with "omarchi-fy" branding
 - Multiple color schemes included in base theme
+
+### Omarcava
+
+Cyberpunk 2077-inspired audio visualizer theme for Cava. Features:
+- 8-color vertical neon gradient (purple → cyan → turquoise)
+- High-energy animations with fast drops (neon flicker effect)
+- Optimized for EDM/electronic music visualization
+- Full frequency spectrum coverage (50Hz-10kHz)
+- Customizable bars, gravity, and sensitivity
+- Auto-reloads on theme change
+
+### Omarclock
+
+Futuristic wrapper for tclock terminal clock. Features:
+- Dynamic color injection from current Omarchy theme
+- Turquoise accents matching your theme
+- Supports all tclock modes (clock, timer, stopwatch, countdown)
+- Instant theme updates on launch
+- Minimal, cyberpunk aesthetic
+
+### Omarvscode
+
+VS Code theme with vibrant aesthetic. Features:
+- Full UI theming (activity bar, sidebar, tabs, editor, terminal)
+- Signature bright yellow status bar (bright red when debugging)
+- Terminal colors match Omarchy ANSI palette
+- Syntax highlighting with theme colors
+- Turquoise accents throughout the interface
+- Instant updates on theme change (requires window reload)
+
+**Installation & Activation**:
+1. Enable in config: Set `omarvscode.enabled = true` in config.toml
+2. Run: `omarchy-theme-gen once` to generate theme
+3. Reload VS Code: `Ctrl+Shift+P` → "Developer: Reload Window"
+4. Select theme: `Ctrl+Shift+P` → "Preferences: Color Theme" → "Omarvscode"
+
+**How it works**:
+- Creates VS Code extension at `~/.vscode/extensions/local.theme-omarvscode/`
+- Extension structure:
+  - `package.json`: Extension metadata
+  - `themes/omarvscode-color-theme.json`: Theme definition with Omarchy colors
+- Updates instantly on theme change (reload window to apply)
+- Works globally across all VS Code workspaces
 
 ## Troubleshooting
 
@@ -302,6 +430,140 @@ The generator checks these locations for spicetify:
 - `/usr/local/bin/spicetify`
 
 If installed elsewhere, ensure it's in one of these locations or add to PATH.
+
+### Cava Not Detected
+
+```bash
+# Verify Cava is installed
+which cava
+cava -v
+
+# If not installed:
+sudo pacman -S cava  # Arch
+sudo apt install cava  # Debian/Ubuntu
+brew install cava  # macOS
+```
+
+### Cava Colors Not Appearing
+
+1. **Check terminal supports 24-bit color (truecolor)**:
+   ```bash
+   # Test truecolor support
+   awk 'BEGIN{
+       s="/\\/\\/\\/\\/\\"; s=s s s s s s s s;
+       for (colnum = 0; colnum<77; colnum++) {
+           r = 255-(colnum*255/76);
+           g = (colnum*510/76);
+           b = (colnum*255/76);
+           if (g>255) g = 510-g;
+           printf "\033[48;2;%d;%d;%dm", r,g,b;
+           printf "\033[38;2;%d;%d;%dm", 255-r,255-g,255-b;
+           printf "%s\033[0m", substr(s,colnum+1,1);
+       }
+       printf "\n";
+   }'
+   ```
+2. **Check config was deployed**: `cat ~/.config/cava/config`
+3. **Verify colors have correct format**: Should be hex like `'#bd00ff'`
+4. **Enable in config**: Set `omarcava.enabled = true` in config.toml
+
+### Cava Theme Not Updating
+
+Cava doesn't auto-reload config. To see new theme:
+```bash
+# Press 'r' in running Cava to reload
+# OR restart Cava
+pkill cava && cava
+```
+
+### Cava Visualization Issues
+
+**Too sensitive / Not sensitive enough**:
+```toml
+# In config.toml
+[programs.variables]
+autosens = 0       # Disable auto-sensitivity
+sensitivity = 150  # Manual sensitivity (decrease for less sensitive)
+```
+
+**Bars drop too slowly (not snappy enough)**:
+```toml
+[programs.variables]
+gravity = 100  # Increase for faster drops (cyberpunk flicker)
+```
+
+**Visualization looks muddy/blurry**:
+```toml
+[programs.variables]
+integral = 40      # Decrease for less smoothing
+monstercat = 25    # Decrease bass emphasis
+```
+
+**Want more/fewer bars**:
+```toml
+[programs.variables]
+bars = 64  # 32-64 recommended (depends on terminal width)
+```
+
+### tclock Not Detected
+
+```bash
+# Verify tclock is installed
+which tclock
+tclock --help
+
+# If not installed, build from source:
+git clone https://github.com/nwrenger/tclock
+cd tclock
+cargo install --path .
+```
+
+### Omarclock Not Working
+
+1. **Check wrapper exists**: `ls -la ~/.local/bin/omarclock`
+2. **Check executable**: `file ~/.local/bin/omarclock` (should say "shell script")
+3. **Check PATH includes ~/.local/bin**: `echo $PATH`
+4. **Test directly**: `~/.local/bin/omarclock`
+5. **Enable in config**: Set `omarclock.enabled = true` in config.toml
+
+### Omarclock Colors Wrong
+
+The wrapper script extracts RGB values from your theme. If colors look wrong:
+1. Check `omarclock` script has correct color values: `cat ~/.local/bin/omarclock`
+2. Regenerate: `omarchy-theme-gen once`
+3. Verify theme has all required colors defined
+
+### VS Code Theme Not Appearing
+
+1. **Check extension exists**: `ls -la ~/.vscode/extensions/local.theme-omarvscode/`
+2. **Verify extension is recognized**: `code --list-extensions | grep omarvscode`
+3. **Check files exist**:
+   ```bash
+   ls ~/.vscode/extensions/local.theme-omarvscode/package.json
+   ls ~/.vscode/extensions/local.theme-omarvscode/themes/omarvscode-color-theme.json
+   ```
+4. **Enable in config**: Set `omarvscode.enabled = true` in config.toml
+5. **Regenerate**: `omarchy-theme-gen once`
+6. **Reload VS Code**: `Ctrl+Shift+P` → "Developer: Reload Window"
+7. **Select theme**: `Ctrl+Shift+P` → "Preferences: Color Theme" → "Omarvscode"
+
+### VS Code Theme Not Updating
+
+VS Code doesn't auto-reload themes. After theme changes:
+```bash
+# Regenerate theme
+omarchy-theme-gen once
+
+# Reload VS Code window
+# Ctrl+Shift+P → "Developer: Reload Window"
+```
+
+### VS Code Theme Colors Wrong
+
+1. **Check theme file**: `cat ~/.vscode/extensions/local.theme-omarvscode/themes/omarvscode-color-theme.json`
+2. **Verify colors format**: Should be hex like `"#ffe64d"`
+3. **Check Omarchy theme** has all color definitions
+4. **Regenerate**: `omarchy-theme-gen once` and reload VS Code
 
 ## Development
 

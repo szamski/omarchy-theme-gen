@@ -1,0 +1,20 @@
+{
+    "name": "theme-omarvscode",
+    "displayName": "Omarvscode Theme",
+    "description": "Omarchy-synced VS Code theme with yellow/red status bar",
+    "version": "1.0.0",
+    "publisher": "local",
+    "engines": {
+        "vscode": "^1.70.0"
+    },
+    "categories": ["Themes"],
+    "contributes": {
+        "themes": [
+            {
+                "label": "Omarvscode",
+                "uiTheme": "vs-dark",
+                "path": "./themes/omarvscode-color-theme.json"
+            }
+        ]
+    }
+}

@@ -22,7 +22,8 @@ Generator/config.toml
 
 # Logs
 *.log
-
+CLAUDE.md
+.mcp.json
 # Node modules (for Omarcord development)
 Omarcord/node_modules/
 Omarcord/build/

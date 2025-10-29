@@ -32,6 +32,22 @@ impl TemplateRenderer {
                 "omarchify-colors.ini",
                 include_str!("../templates/omarchify-colors.ini"),
             )?;
+            tera.add_raw_template(
+                "omarcava.config",
+                include_str!("../templates/omarcava.config"),
+            )?;
+            tera.add_raw_template(
+                "omarclock.sh",
+                include_str!("../templates/omarclock.sh"),
+            )?;
+            tera.add_raw_template(
+                "omarvscode.json",
+                include_str!("../templates/omarvscode.json"),
+            )?;
+            tera.add_raw_template(
+                "omarvscode-package.json",
+                include_str!("../templates/omarvscode-package.json"),
+            )?;
 
             tera
         };
@@ -102,6 +118,12 @@ impl TemplateRenderer {
             // .theme.css comes before -colors.css for themes like omarcord
             if self.tera.get_template_names().any(|n| n == format!("{}.theme.css", template_name)) {
                 format!("{}.theme.css", template_name)
+            } else if self.tera.get_template_names().any(|n| n == format!("{}.config", template_name)) {
+                format!("{}.config", template_name)
+            } else if self.tera.get_template_names().any(|n| n == format!("{}.sh", template_name)) {
+                format!("{}.sh", template_name)
+            } else if self.tera.get_template_names().any(|n| n == format!("{}.json", template_name)) {
+                format!("{}.json", template_name)
             } else if self.tera.get_template_names().any(|n| n == format!("{}.ini", template_name)) {
                 format!("{}.ini", template_name)
             } else if self.tera.get_template_names().any(|n| n == format!("{}-colors.ini", template_name)) {
@@ -141,6 +163,8 @@ mod tests {
 
         assert!(templates.contains(&"omarcord.theme.css".to_string()));
         assert!(templates.contains(&"omarchify-colors.ini".to_string()));
+        assert!(templates.contains(&"omarcava.config".to_string()));
+        assert!(templates.contains(&"omarclock.sh".to_string()));
     }
 
     #[test]
@@ -177,5 +201,32 @@ mod tests {
         assert!(result.contains("--bg-"));
         assert!(result.contains("#1a1b26"));
         assert!(result.contains("#c0caf5"));
+    }
+
+    #[test]
+    fn test_render_omarcava() {
+        let renderer = TemplateRenderer::new(None).unwrap();
+        let mut palette = ColorPalette::default();
+        palette.background = Some(Color::new("#000000").unwrap());
+        palette.foreground = Some(Color::new("#ffffff").unwrap());
+        palette.bright_magenta = Some(Color::new("#bd00ff").unwrap());
+        palette.magenta = Some(Color::new("#d600ff").unwrap());
+        palette.bright_green = Some(Color::new("#00ff9f").unwrap());
+        palette.cyan = Some(Color::new("#00d4ff").unwrap());
+
+        let result = renderer.render("omarcava", &palette, &HashMap::new()).unwrap();
+
+        // Check for key sections
+        assert!(result.contains("OMARCAVA"));
+        assert!(result.contains("[general]"));
+        assert!(result.contains("[color]"));
+        assert!(result.contains("gradient = 1"));
+        assert!(result.contains("gradient_count = 8"));
+        // Check for actual gradient colors
+        assert!(result.contains("'#bd00ff'")); // bright_magenta
+        assert!(result.contains("'#00ff9f'")); // bright_green (primary accent)
+        assert!(result.contains("background = '#000000'")); // background
+        assert!(result.contains("framerate = 60"));
+        assert!(result.contains("bars = 48"));
     }
 }

@@ -1,4 +1,3 @@
-use anyhow::{Context, Result};
 use std::path::PathBuf;
 use std::process::Command;
 use tracing::{debug, info};
@@ -16,6 +15,7 @@ pub struct InstalledProgram {
     pub config_file: Option<PathBuf>,
 
     /// Whether the program is installed
+    #[allow(dead_code)]
     pub is_installed: bool,
 
     /// Whether CLI tool is available (for programs that need it)
@@ -67,16 +67,34 @@ impl ProgramDetector {
             programs.push(spicetify);
         }
 
+        if let Some(cava) = Self::detect_cava() {
+            programs.push(cava);
+        }
+
+        if let Some(tclock) = Self::detect_tclock() {
+            programs.push(tclock);
+        }
+
+        if let Some(vscode) = Self::detect_vscode() {
+            programs.push(vscode);
+        }
+
         programs
     }
 
-    /// Detect programs by config name (omarcord -> vencord, omarchify -> spicetify)
+    /// Detect programs by config name (omarcord -> vencord, omarchify -> spicetify, omarcava -> cava)
     pub fn detect_by_config_name(config_name: &str) -> Option<InstalledProgram> {
         match config_name {
             "omarcord" => Self::detect_vencord(),
             "omarchify" => Self::detect_spicetify(),
+            "omarcava" => Self::detect_cava(),
+            "omarclock" => Self::detect_tclock(),
+            "omarvscode" => Self::detect_vscode(),
             "vencord" => Self::detect_vencord(),
             "spicetify" => Self::detect_spicetify(),
+            "cava" => Self::detect_cava(),
+            "tclock" => Self::detect_tclock(),
+            "vscode" => Self::detect_vscode(),
             _ => None,
         }
     }
@@ -186,6 +204,121 @@ impl ProgramDetector {
         Some(
             InstalledProgram::new("spicetify", theme_dir, None, true, cli_available)
                 .with_cli_path(cli_path),
+        )
+    }
+
+    /// Detect Cava installation
+    pub fn detect_cava() -> Option<InstalledProgram> {
+        debug!("Detecting Cava installation...");
+
+        let home = dirs::home_dir()?;
+
+        // Check if cava binary is available (Cava uses -v, not --version)
+        let cli_available = match Command::new("cava").arg("-v").output() {
+            Ok(output) => output.status.success(),
+            Err(_) => false,
+        };
+
+        if !cli_available {
+            debug!("Cava binary not found in PATH");
+            return None;
+        }
+
+        // Cava config directory
+        let config_dir = home.join(".config/cava");
+        let config_file = config_dir.join("config");
+
+        // We consider it "installed" if the binary is available
+        // Config directory will be created during deployment if needed
+        info!("✓ Cava detected (binary available in PATH)");
+
+        Some(
+            InstalledProgram::new(
+                "cava",
+                config_dir,
+                Some(config_file),
+                true,
+                true, // CLI available (we just checked)
+            )
+            .with_cli_path(Some(PathBuf::from("cava"))),
+        )
+    }
+
+    /// Detect tclock installation
+    pub fn detect_tclock() -> Option<InstalledProgram> {
+        debug!("Detecting tclock installation...");
+
+        let home = dirs::home_dir()?;
+
+        // Check if tclock binary is available
+        let cli_available = match Command::new("tclock").arg("--help").output() {
+            Ok(output) => output.status.success(),
+            Err(_) => false,
+        };
+
+        if !cli_available {
+            debug!("tclock binary not found in PATH");
+            return None;
+        }
+
+        // tclock uses wrapper script at ~/.local/bin/omarclock
+        let install_dir = home.join(".local/bin");
+        let wrapper_file = install_dir.join("omarclock");
+
+        info!("✓ tclock detected (binary available in PATH)");
+
+        Some(
+            InstalledProgram::new(
+                "tclock",
+                install_dir.clone(),
+                Some(wrapper_file),
+                true,
+                true, // CLI available (we just checked)
+            )
+            .with_cli_path(Some(PathBuf::from("tclock"))),
+        )
+    }
+
+    /// Detect VS Code installation
+    pub fn detect_vscode() -> Option<InstalledProgram> {
+        debug!("Detecting VS Code installation...");
+
+        let home = dirs::home_dir()?;
+
+        // Check for VS Code extensions directory
+        let vscode_ext_dir = home.join(".vscode/extensions");
+
+        if !vscode_ext_dir.exists() {
+            debug!("VS Code extensions directory not found");
+            return None;
+        }
+
+        // VS Code theme will be installed at ~/.vscode/extensions/local.theme-omarvscode/
+        // (directory name follows publisher.name convention)
+        let theme_dir = vscode_ext_dir.join("local.theme-omarvscode");
+        let theme_file = theme_dir.join("themes/omarvscode-color-theme.json");
+
+        // Check if 'code' command is available
+        let cli_available = match Command::new("code").arg("--version").output() {
+            Ok(output) => output.status.success(),
+            Err(_) => false,
+        };
+
+        info!("✓ VS Code detected (extensions directory exists)");
+
+        Some(
+            InstalledProgram::new(
+                "vscode",
+                theme_dir,
+                Some(theme_file),
+                true,
+                cli_available,
+            )
+            .with_cli_path(if cli_available {
+                Some(PathBuf::from("code"))
+            } else {
+                None
+            }),
         )
     }
 
