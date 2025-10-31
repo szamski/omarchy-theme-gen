@@ -696,8 +696,7 @@ See respective LICENSE files in subdirectories for details.
 
 - **System24**: Base Discord theme by [refact0r](https://github.com/refact0r/system24)
 - **text theme**: Base Spotify theme by [Spicetify community](https://github.com/spicetify/spicetify-themes)
-- **Omarchy**: The foundation theme system by szamski
-- **Vencord**: Discord client modification - [vencord.dev](https://vencord.dev/)
+ **Vencord**: Discord client modification - [vencord.dev](https://vencord.dev/)
 - **Spicetify**: Spotify theming CLI - [spicetify.app](https://spicetify.app/)
 
 ## Links
