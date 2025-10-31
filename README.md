@@ -35,7 +35,7 @@ When you change your Omarchy theme, all enabled applications update automaticall
 - **Spotify** (optional): For Spotify theming
 - **Spicetify** (optional): Spotify theming CLI - installed via install.sh
 - **Cava** (optional): Audio visualizer - `sudo pacman -S cava` (Arch) or `sudo apt install cava` (Debian/Ubuntu)
-- **tclock** (optional): Terminal clock - install from [tclock](https://github.com/nwrenger/tclock)
+- **tclock** (optional): Terminal clock - `cargo install tclock` or install via [tclock](https://github.com/nwrenger/tclock)
 
 ## Installation
 
@@ -165,19 +165,19 @@ template = "omarchify"
 
 [[programs]]
 name = "omarcava"
-enabled = false  # Enable if you have Cava installed
+enabled = true
 output_file = "config"
 template = "omarcava"
 
 [[programs]]
 name = "omarclock"
-enabled = false  # Enable if you have tclock installed
-output_file = "omarclock"
+enabled = true
+output_file = "omarclock.sh"
 template = "omarclock"
 
 [[programs]]
 name = "omarvscode"
-enabled = false  # Enable if you use VS Code
+enabled = true
 output_file = "omarvscode-color-theme.json"
 template = "omarvscode"
 
@@ -267,8 +267,8 @@ omarchy-theme-gen/
 name = "omarcava"
 enabled = true
 [programs.variables]
-bars = 64              # More bars = denser visualization
-gravity = 100          # Higher = faster drops (neon flicker)
+bars = 0               # 0 = auto-adjust to terminal width (recommended)
+gravity = 85           # Higher = faster drops (neon flicker)
 integral = 55          # Higher = smoother transitions
 monstercat = 35        # Bass emphasis (club feel)
 framerate = 60         # 30-60 FPS
@@ -276,30 +276,46 @@ framerate = 60         # 30-60 FPS
 
 ### Omarclock (tclock Wrapper)
 
-**Futuristic Terminal Clock**
+**Clean Cyberpunk Terminal Clock**
 
-1. **Template**: Shell script wrapper for tclock with theme colors
-2. **Color Injection**: Injects RGB values from Omarchy theme
+1. **Template**: Minimal shell script wrapper for tclock with theme colors
+2. **Color Injection**: Applies theme's cyan color to tclock
 3. **Deployment**: Creates executable script at `~/.local/bin/omarclock`
 4. **Usage**: Run `omarclock` to launch themed clock
 5. **Updates**: Instant on next launch
 
 **Features**:
-- Dynamic color injection from current theme
-- Supports all tclock modes (clock, timer, stopwatch, countdown)
-- Turquoise accents matching Omarchy theme
-- Customizable size and appearance
+- Clean, minimal design (no borders, no extra text)
+- Dynamic color from current Omarchy theme (bright cyan)
+- No circular background - pure cyberpunk aesthetics
+- Supports command-line arguments for customization
+- Automatic bar display adjustments
 
 **Usage**:
 ```bash
-# Launch futuristic clock
+# Launch clean clock (default: no seconds, no border)
 omarclock
 
-# With custom size
-omarclock --size 5
+# Show seconds
+omarclock --seconds
 
-# Timer mode
-omarclock --mode timer
+# Add box outline
+omarclock --box
+
+# Add colored disc background
+omarclock --disc
+
+# 24-hour format
+omarclock --24
+
+# Analog style
+omarclock --analog
+
+# Countdown timer
+omarclock --countdown 5m
+
+# Pass any tclock flag directly
+omarclock -bounce 2
 ```
 
 ### Color Extraction
@@ -339,17 +355,19 @@ Cyberpunk 2077-inspired audio visualizer theme for Cava. Features:
 - High-energy animations with fast drops (neon flicker effect)
 - Optimized for EDM/electronic music visualization
 - Full frequency spectrum coverage (50Hz-10kHz)
-- Customizable bars, gravity, and sensitivity
+- Auto-adjusting bar count (prevents window width errors)
+- Customizable gravity, sensitivity, and framerate
 - Auto-reloads on theme change
 
 ### Omarclock
 
-Futuristic wrapper for tclock terminal clock. Features:
-- Dynamic color injection from current Omarchy theme
-- Turquoise accents matching your theme
-- Supports all tclock modes (clock, timer, stopwatch, countdown)
+Clean cyberpunk wrapper for tclock terminal clock. Features:
+- Minimal design with no borders or background circles
+- Dynamic cyan color from current Omarchy theme
+- Clean, distraction-free time display
+- Support for all tclock features via pass-through arguments
 - Instant theme updates on launch
-- Minimal, cyberpunk aesthetic
+- Pure cyberpunk aesthetics - just clean digits
 
 ### Omarvscode
 
@@ -362,10 +380,9 @@ VS Code theme with vibrant aesthetic. Features:
 - Instant updates on theme change (requires window reload)
 
 **Installation & Activation**:
-1. Enable in config: Set `omarvscode.enabled = true` in config.toml
-2. Run: `omarchy-theme-gen once` to generate theme
-3. Reload VS Code: `Ctrl+Shift+P` → "Developer: Reload Window"
-4. Select theme: `Ctrl+Shift+P` → "Preferences: Color Theme" → "Omarvscode"
+1. Run: `omarchy-theme-gen once` to generate theme (enabled by default)
+2. Reload VS Code: `Ctrl+Shift+P` → "Developer: Reload Window"
+3. Select theme: `Ctrl+Shift+P` → "Preferences: Color Theme" → "Omarvscode"
 
 **How it works**:
 - Creates VS Code extension at `~/.vscode/extensions/local.theme-omarvscode/`
@@ -465,7 +482,7 @@ brew install cava  # macOS
    ```
 2. **Check config was deployed**: `cat ~/.config/cava/config`
 3. **Verify colors have correct format**: Should be hex like `'#bd00ff'`
-4. **Enable in config**: Set `omarcava.enabled = true` in config.toml
+4. **Regenerate if needed**: `omarchy-theme-gen once` (omarcava is enabled by default)
 
 ### Cava Theme Not Updating
 
@@ -502,8 +519,10 @@ monstercat = 25    # Decrease bass emphasis
 **Want more/fewer bars**:
 ```toml
 [programs.variables]
-bars = 64  # 32-64 recommended (depends on terminal width)
+bars = 0   # 0 = auto-adjust (recommended), or set specific number like 32-64
 ```
+
+**Note**: Setting `bars = 0` (default) automatically adjusts the number of bars to fit your terminal width, preventing "window too narrow" errors.
 
 ### tclock Not Detected
 
@@ -512,10 +531,17 @@ bars = 64  # 32-64 recommended (depends on terminal width)
 which tclock
 tclock --help
 
-# If not installed, build from source:
+# If not installed, install via cargo:
+cargo install tclock
+
+# Or build from source:
 git clone https://github.com/nwrenger/tclock
 cd tclock
 cargo install --path .
+
+# Ensure ~/.cargo/bin is in PATH
+echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ### Omarclock Not Working
@@ -524,14 +550,15 @@ cargo install --path .
 2. **Check executable**: `file ~/.local/bin/omarclock` (should say "shell script")
 3. **Check PATH includes ~/.local/bin**: `echo $PATH`
 4. **Test directly**: `~/.local/bin/omarclock`
-5. **Enable in config**: Set `omarclock.enabled = true` in config.toml
+5. **Regenerate if needed**: `omarchy-theme-gen once` (omarclock is enabled by default)
 
 ### Omarclock Colors Wrong
 
-The wrapper script extracts RGB values from your theme. If colors look wrong:
-1. Check `omarclock` script has correct color values: `cat ~/.local/bin/omarclock`
+The wrapper script uses your theme's bright cyan color. If colors look wrong:
+1. Check `omarclock` script has correct color value: `cat ~/.local/bin/omarclock | grep PRIMARY_COLOR`
 2. Regenerate: `omarchy-theme-gen once`
-3. Verify theme has all required colors defined
+3. Verify theme has `bright_cyan` color defined in Omarchy theme
+4. Try running directly: `tclock -color "#00d4ff"` to test tclock itself
 
 ### VS Code Theme Not Appearing
 
@@ -542,10 +569,9 @@ The wrapper script extracts RGB values from your theme. If colors look wrong:
    ls ~/.vscode/extensions/local.theme-omarvscode/package.json
    ls ~/.vscode/extensions/local.theme-omarvscode/themes/omarvscode-color-theme.json
    ```
-4. **Enable in config**: Set `omarvscode.enabled = true` in config.toml
-5. **Regenerate**: `omarchy-theme-gen once`
-6. **Reload VS Code**: `Ctrl+Shift+P` → "Developer: Reload Window"
-7. **Select theme**: `Ctrl+Shift+P` → "Preferences: Color Theme" → "Omarvscode"
+4. **Regenerate**: `omarchy-theme-gen once`
+5. **Reload VS Code**: `Ctrl+Shift+P` → "Developer: Reload Window"
+6. **Select theme**: `Ctrl+Shift+P` → "Preferences: Color Theme" → "Omarvscode"
 
 ### VS Code Theme Not Updating
 

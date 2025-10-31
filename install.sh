@@ -297,16 +297,13 @@ else
         esac
     else
         info "Skipping Cava installation"
-        echo "  Note: Omarcava theme will be available but disabled in config"
+        echo "  Note: Install Cava later if you want audio visualizer theming"
     fi
 fi
 
-# Update config to enable/disable Cava based on installation
-if [ -f "$CONFIG_DIR/config.toml" ]; then
-    if command_exists cava; then
-        info "Cava detected - Omarcava theme is available"
-        echo "  Edit $CONFIG_DIR/config.toml to enable omarcava"
-    fi
+# Cava theme will be generated automatically when themes are generated
+if command_exists cava; then
+    info "Cava detected - Omarcava theme will auto-generate on theme changes"
 fi
 
 #############################################
@@ -317,7 +314,6 @@ section "Part 3.6: tclock Setup"
 
 if command_exists tclock; then
     success "tclock is already installed"
-    tclock --version 2>/dev/null || echo "  (version detection available)"
     INSTALLED_TCLOCK=true
 else
     echo "tclock (terminal clock) is not installed."
@@ -353,8 +349,13 @@ else
         fi
     else
         info "Skipping tclock installation"
-        echo "  Note: Omarclock wrapper will be available but disabled in config"
+        echo "  Note: Install tclock later with: cargo install tclock"
     fi
+fi
+
+# tclock wrapper will be generated automatically when themes are generated
+if command_exists tclock; then
+    info "tclock detected - Omarclock wrapper will auto-generate on theme changes"
 fi
 
 #############################################
@@ -385,9 +386,8 @@ else
     echo "  https://code.visualstudio.com/"
     echo ""
     echo "  After installing VS Code:"
-    echo "  1. Enable in config: Set omarvscode.enabled = true"
-    echo "  2. Run: omarchy-theme-gen once"
-    echo "  3. Reload VS Code and select the theme"
+    echo "  1. Run: omarchy-theme-gen once"
+    echo "  2. Reload VS Code and select the theme (Ctrl+Shift+P → Color Theme → Omarvscode)"
 fi
 
 #############################################
