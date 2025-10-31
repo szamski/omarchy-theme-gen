@@ -40,7 +40,7 @@ echo "  1. Uninstall the current installation"
 echo "  2. Rebuild from source"
 echo "  3. Install fresh version"
 echo ""
-echo "Your Spicetify, Vencord, and Cava installations will remain intact."
+echo "Your Spicetify, Vencord, Cava, tclock, and VS Code theme will remain intact."
 echo ""
 
 read -p "Continue with reinstall? [Y/n]: " confirm
@@ -62,7 +62,9 @@ section "Part 1: Uninstalling Current Version"
 # n = don't remove Vencord theme
 # n = don't remove Spicetify theme
 # n = don't remove Cava config
-echo -e "y\ny\ny\nn\nn\nn" | bash "$SCRIPT_DIR/uninstall.sh"
+# n = don't remove tclock wrapper
+# n = don't remove VS Code theme
+echo -e "y\ny\ny\nn\nn\nn\nn\nn" | bash "$SCRIPT_DIR/uninstall.sh"
 
 if [ $? -ne 0 ]; then
     error "Uninstall failed!"

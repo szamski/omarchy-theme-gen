@@ -1,6 +1,6 @@
 #!/bin/bash
 # Omarchy Theme Generator - Comprehensive Installation Script
-# Installs: Generator + Spicetify + Vencord + Cava + Themes
+# Installs: Generator + Spicetify + Vencord + Cava + tclock + VS Code Theme
 
 set -e
 
@@ -37,6 +37,8 @@ INSTALLED_GENERATOR=false
 INSTALLED_SPICETIFY=false
 INSTALLED_VENCORD=false
 INSTALLED_CAVA=false
+INSTALLED_TCLOCK=false
+INSTALLED_VSCODE_THEME=false
 
 # Function to print status messages
 info() { echo -e "${BLUE}[INFO]${NC} $1"; }
@@ -308,6 +310,87 @@ if [ -f "$CONFIG_DIR/config.toml" ]; then
 fi
 
 #############################################
+# PART 3.6: Install tclock (if needed)
+#############################################
+
+section "Part 3.6: tclock Setup"
+
+if command_exists tclock; then
+    success "tclock is already installed"
+    tclock --version 2>/dev/null || echo "  (version detection available)"
+    INSTALLED_TCLOCK=true
+else
+    echo "tclock (terminal clock) is not installed."
+    echo "Omarclock provides a futuristic themed wrapper for tclock."
+
+    read -p "Do you want to install tclock? [Y/n]: " install_tclock
+
+    if [[ ! "$install_tclock" =~ ^[Nn]$ ]]; then
+        info "Installing tclock..."
+        echo ""
+        echo "tclock installation:"
+        echo "  tclock must be installed via Cargo (Rust)"
+        echo ""
+
+        if command_exists cargo; then
+            info "Installing tclock via cargo..."
+            cargo install tclock
+
+            if command_exists tclock; then
+                success "tclock installed successfully"
+                INSTALLED_TCLOCK=true
+            else
+                warning "tclock installation may have failed. Checking ~/.cargo/bin..."
+                if [ -f "$ACTUAL_HOME/.cargo/bin/tclock" ]; then
+                    success "tclock found at ~/.cargo/bin/tclock"
+                    echo "  Make sure ~/.cargo/bin is in your PATH"
+                    INSTALLED_TCLOCK=true
+                fi
+            fi
+        else
+            error "Cargo not found. Install Rust first: https://rustup.rs/"
+            echo "  After installing Rust, run: cargo install tclock"
+        fi
+    else
+        info "Skipping tclock installation"
+        echo "  Note: Omarclock wrapper will be available but disabled in config"
+    fi
+fi
+
+#############################################
+# PART 3.7: VS Code Theme Setup
+#############################################
+
+section "Part 3.7: VS Code Theme Setup"
+
+if command_exists code; then
+    success "VS Code is installed"
+    code --version | head -1
+
+    VSCODE_EXT_DIR="$ACTUAL_HOME/.vscode/extensions"
+    if [ -d "$VSCODE_EXT_DIR" ]; then
+        success "VS Code extensions directory exists"
+        info "Omarvscode theme will be installed automatically on first generation"
+        INSTALLED_VSCODE_THEME=true
+        echo "  After running 'omarchy-theme-gen once':"
+        echo "  1. Reload VS Code: Ctrl+Shift+P → 'Developer: Reload Window'"
+        echo "  2. Select theme: Ctrl+Shift+P → 'Preferences: Color Theme' → 'Omarvscode'"
+    else
+        warning "VS Code extensions directory not found"
+        echo "  Launch VS Code once to initialize, then regenerate themes"
+    fi
+else
+    info "VS Code is not installed"
+    echo "  Install VS Code to use Omarvscode theme:"
+    echo "  https://code.visualstudio.com/"
+    echo ""
+    echo "  After installing VS Code:"
+    echo "  1. Enable in config: Set omarvscode.enabled = true"
+    echo "  2. Run: omarchy-theme-gen once"
+    echo "  3. Reload VS Code and select the theme"
+fi
+
+#############################################
 # PART 4: Systemd Service Setup
 #############################################
 
@@ -377,6 +460,8 @@ echo "Installed Components:"
 [ "$INSTALLED_SPICETIFY" = true ] && echo "  ${GREEN}✓${NC} Spicetify"
 [ "$INSTALLED_VENCORD" = true ] && echo "  ${GREEN}✓${NC} Vencord"
 [ "$INSTALLED_CAVA" = true ] && echo "  ${GREEN}✓${NC} Cava (Audio Visualizer)"
+[ "$INSTALLED_TCLOCK" = true ] && echo "  ${GREEN}✓${NC} tclock (Terminal Clock)"
+[ "$INSTALLED_VSCODE_THEME" = true ] && echo "  ${GREEN}✓${NC} VS Code Theme Support"
 
 echo ""
 echo "File Locations:"
@@ -390,6 +475,12 @@ if [ -d "$VENCORD_DIR" ]; then
 fi
 if command_exists cava; then
     echo "  Cava:       ${YELLOW}$ACTUAL_HOME/.config/cava/${NC}"
+fi
+if command_exists tclock; then
+    echo "  tclock:     ${YELLOW}$ACTUAL_HOME/.local/bin/omarclock${NC}"
+fi
+if command_exists code; then
+    echo "  VS Code:    ${YELLOW}$ACTUAL_HOME/.vscode/extensions/local.theme-omarvscode/${NC}"
 fi
 
 echo ""
